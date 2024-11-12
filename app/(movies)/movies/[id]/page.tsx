@@ -1,22 +1,21 @@
-import { Suspense } from "react"
-import MovieInfo, { getMovie } from "../../../../components/movie-info"
-import MovieVideos from "../../../../components/movie-video"
+import { Suspense } from "react";
+import MovieInfo, { getMovie } from "../../../../components/movie-info";
+import MovieVideos from "../../../../components/movie-video";
 
 interface IParams {
-    params: { id: string }
+    params: Promise<{ id: string }>;
 }
 
-export async function generateMetadata({ params: { id } }: IParams) {
+export async function generateMetadata({ params }: IParams) {
+    const { id } = await params;
     const movie = await getMovie(id);
     return {
-        title: movie.title
-    }
+        title: movie.title,
+    };
 }
 
-
-export default async function MovieDetailPage({
-    params: { id },
-}: IParams) {
+export default async function MovieDetailPage({ params }: IParams) {
+    const { id } = await params;
     return (
         <div>
             <Suspense fallback={<h1>Loading movie info</h1>}>
@@ -26,5 +25,7 @@ export default async function MovieDetailPage({
                 <MovieVideos id={id} />
             </Suspense>
         </div>
-    )
+    );
 }
+
+export const runtime = "edge";
